@@ -1,0 +1,314 @@
+postgres://kgxfslbakrykbg:a9bf7981989fb38ff945e1d486fc0e08ad9421f0b2ff5339ae884e425a7cddbe@ec2-3-92-119-83.compute-1.amazonaws.com:5432/dc7qftk0qj0tis
+-- CREATE TABLE users(
+-- id SERIAL PRIMARY KEY,
+-- first_name VARCHAR(60) NOT NULL,
+-- last_name VARCHAR(100),
+-- email VARCHAR(100),
+-- account_type INTEGER NOT NULL
+-- );
+
+-- DROP TABLE users; 
+-- ALTER TABLE users DROP COLUMN email;
+
+
+EX: JOIN
+SELECT title, artist.name
+FROM album
+JOIN artist
+ON album.artist_id = artist.artist_id
+ORDER BY artist.name;
+
+
+Features:
+	Users can sign in to app with their email and password
+	users can follow each other
+	users can create posts with photos and/or text
+	users can comment on posts
+	users can join groups
+	users can create posts within groups
+
+Brainstorming:
+	Data necessary?
+	
+	email/pw/name/username
+	following/followedby
+	posts/comments on posts 
+	group types/groupmembers/group post tags/
+
+users
+pw
+email
+groups
+posts
+admins
+photos tagged v uploaded
+followers 
+who is following
+accounts
+comments
+profiles
+games
+news
+timestamps
+favorites
+Relationship/Friends
+
+Table Ideas
+
+Users - info about user, each row is a different user,stores email
+	UserID
+	Username
+	User nickname/alias
+	UserPasswords
+	UserEmail
+	UserLocation
+	UserBirthday
+	SSN,MMN,NOFP (security q's)
+Admins
+	Admin ID
+	User ID - REFERENCE User-UserID
+	Admin Level
+	Admin Password
+	Admin badge (for fanciness and flair)
+
+Group Admin/Mods
+	GroupAdminID
+	User ID - REFERENCE Users - UserID
+	GroupID - REFERENCE Group-GroupID
+	Group Admin Level
+
+Group - info about group, group id
+	Group ID
+	Group Title
+	Group Description
+	Group Rules
+GroupPost
+	Group ID - REFERENCE - Group - Group ID
+	Post ID - REFERENCE - Post - Post ID
+	GroupPost ID
+GroupPhoto
+	GroupPhoto ID
+	Group ID - REFERENCE Group - Group ID
+	Photo ID - REFERENCE - Photos - Photo ID
+
+Follow
+	Follower ID - REFERENCE Users - UserID (User being followed)
+	Following ID - REFERENCE Users - UserID (User following FollowerID)
+
+Profile/Account - profile name, photo
+	Profile ID
+	User ID - REFERENCE Users - UserID
+
+Photos - relates to users, group, ocmments, tags
+	photos
+	timestamp
+	User ID - REFERENCE Users - UserID
+	GroupID - REFERENCE Group - Group ID
+	
+PhotoTags - tags on photos
+	PhotoTag ID
+	Photo ID - REFERENCE - Photos - Photo ID
+	User ID - REFERENCE - User - UserID (who did the tagging)
+	Timestamps
+
+Posts - relates to users and post content
+	Post ID
+	User ID - REFERENCE Users - UserID
+	Timestamp
+
+Comments - can relate to groups, posts, photos
+	Comment ID
+	Timestamp
+	Group ID - REFERENCE Group - Group ID
+	User ID - REFERENCE Users - UserID
+
+Features
+users can sign into the app with their email and password
+
+users can create recipes with ingredients and instructions
+
+recipes can be marked as public or private
+
+users can view other people’s recipes
+
+ingredients from recipes can be added to user’s grocery lists
+
+users can create their own occasions and assign recipes to occasions
+
+
+
+
+Brainstorming:
+Users
+Pw
+email
+ingredients
+recipes
+instructions
+public/private id
+grocery list
+occasions
+comments
+
+Table Ideas:
+
+Users - info about user, each row is a different user,stores email,name,etc.
+	UserID
+	Username
+	UserPasswords
+	UserEmail
+	SSN,MMN,NOFP (security q's)
+
+Ingredients - info about ingredients, health warnings, picture of ingredients
+	ingredient_ID
+	ingredient_name 
+	ingredient_picture
+	health_risks
+
+FoodClass - info about classes of ingredients (spices, veggies, proteins)
+	foodClass_ID
+	foodClass_name
+	foodClass_description
+	foodClass_img
+	
+Recipes - info about ingredients, instructions, pictures, time required
+	recipe_ID
+	ingredient_ID -REFERENCE Ingredients - ingredient_id
+	recipe_name
+	instructions
+	final_dish
+	recipe_type
+	total_time
+	public_view (bool)
+	calorie_count 
+	recipe_img
+
+Types - info about types of recipes, like pastries, stews, pastas
+	type_ID
+	type_name
+	type_description
+
+RecipeType - link types of food to recipes
+	recipe_ID -REFERENCE Recipes - recipe_ID
+	type_ID - REFERENCE Types - type_ID
+
+GroceryList - info on what ingredients, ingredient types to help find in store, and what recipe we are shopping for
+	ingredient_ID -REFERENCE Ingredients - ingredient_ID
+	foodClass_ID -REFERENCE FoodClass - foodClass_ID
+	recipe_ID - REFERENCE Recipes - recipe_ID
+	
+Occasions - info on occasions
+	occasion_ID
+	occasion_name
+	recipe_ID -REFERENCE Recipes - recipe_ID
+
+Comments - can relate to groups, posts, photos
+	Comment ID
+	Timestamp
+	User ID - REFERENCE Users - UserID
+	recipe_ID -REFERENCE Recipes - recipe_ID
+
+
+Relationships:
+
+One to One:
+
+
+
+
+
+One to Many:
+
+Recipes to Comments- many comments on the same recipe but each comment can only be on one recipe
+Users to Comments - comments are made by one user but one user may make multiple comments
+
+
+Many to Many:
+
+Recipes to Ingredients
+Recipes to Grocery Lists
+Ingredients to Grocery Lists
+
+
+
+Columns:
+
+Users -
+	UserID - INT - All ID's will only be integers, don't need precise numbers
+	Username - string - user will choose name to be referenced by the app
+	UserPasswords - string - password hash stored as string
+	UserEmail - string - email will be a string, won't need spaces either
+
+Ingredients 
+	ingredient_ID - INT
+	ingredient_name - string - to recognize ingredient and match with recipes
+	ingredient_picture - blob - can store large amt of binary data for pics
+	health_risks - text - cautionary info abt ingredients that may have adverse health effects
+
+FoodClass 
+	foodClass_ID - INT
+	foodClass_name - string - to help with identifying ingredients at the grocery store
+	foodClass_description - text - differentiating between different types of food, higher char limit
+	foodClass_img - blob - can store large amt of binary data for pics
+	
+Recipes 
+	recipe_ID - INT
+	ingredient_ID -REFERENCE Ingredients - ingredient_id
+	recipe_name - string - to identify recipe
+	instructions - text - to describe method of preparing dish
+	final_dish - blob - can display desired outcome
+	total_time - INT - let user know how much time to allocate to recipe
+	public_view (bool) - determine whether 
+	calorie_count 
+	recipe_img - blob - can store large amt of binary data for pics
+
+Types 
+	type_ID
+	type_name
+	type_description
+
+RecipeType
+	recipe_ID -REFERENCE Recipes - recipe_ID
+	type_ID - REFERENCE Types - type_ID
+
+GroceryList 
+	ingredient_ID -REFERENCE Ingredients - ingredient_ID
+	foodClass_ID -REFERENCE FoodClass - foodClass_ID
+	recipe_ID - REFERENCE Recipes - recipe_ID
+	
+Occasions
+	occasion_ID
+	occasion_name
+	recipe_ID -REFERENCE Recipes - recipe_ID
+
+Comments
+	Comment ID
+	Timestamp
+	User ID - REFERENCE Users - UserID
+	recipe_ID -REFERENCE Recipes - recipe_ID
+
+
+
+CREATE TABLE users(
+  user_id SERIAL PRIMARY KEY,
+  username VARCHAR(50),
+  user_email VARCHAR(50)
+  );
+  
+  INSERT INTO users(username, user_email)
+  VALUES ('Logan', 'Logan@devmtn.com'),
+  ('Jagruti', 'Jagruti@devmtn.com');
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

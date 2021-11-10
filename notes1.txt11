@@ -1,0 +1,103 @@
+Features:
+	Users can sign in to app with their email and password
+	users can follow each other
+	users can create posts with photos and/or text
+	users can comment on posts
+	users can join groups
+	users can create posts within groups
+
+Brainstorming:
+	Data necessary?
+	
+	email/pw/name/username
+	following/followedby
+	posts/comments on posts 
+	group types/groupmembers/group post tags/
+
+users
+pw
+email
+groups
+posts
+admins
+photos tagged v uploaded
+followers 
+who is following
+accounts
+comments
+profiles
+games
+news
+timestamps
+favorites
+Relationship/Friends
+
+
+Table Ideas
+
+Users - info about user, each row is a different user,stores email
+	UserID
+	Username
+	User nickname/alias
+	UserPasswords
+	UserEmail
+	UserLocation
+	UserBirthday
+	SSN,MMN,NOFP (security q's)
+Admins
+	Admin ID
+	User ID - REFERENCE User-UserID
+	Admin Level
+	Admin Password
+	Admin badge (for fanciness and flair)
+
+Group Admin/Mods
+	GroupAdminID
+	User ID - REFERENCE Users - UserID
+	GroupID - REFERENCE Group-GroupID
+	Group Admin Level
+
+Group - info about group, group id
+	Group ID
+	Group Title
+	Group Description
+	Group Rules
+GroupPost
+	Group ID - REFERENCE - Group - Group ID
+	Post ID - REFERENCE - Post - Post ID
+	GroupPost ID
+GroupPhoto
+	GroupPhoto ID
+	Group ID - REFERENCE Group - Group ID
+	Photo ID - REFERENCE - Photos - Photo ID
+
+Follow
+	Follower ID - REFERENCE Users - UserID (User being followed)
+	Following ID - REFERENCE Users - UserID (User following FollowerID)
+
+Profile/Account - profile name, photo
+	Profile ID
+	User ID - REFERENCE Users - UserID
+
+Photos - relates to users, group, ocmments, tags
+	photos
+	timestamp
+	User ID - REFERENCE Users - UserID
+	GroupID - REFERENCE Group - Group ID
+	
+PhotoTags - tags on photos
+	PhotoTag ID
+	Photo ID - REFERENCE - Photos - Photo ID
+	User ID - REFERENCE - User - UserID (who did the tagging)
+	Timestamps
+
+Posts - relates to users and post content
+	Post ID
+	User ID - REFERENCE Users - UserID
+	Timestamp
+
+Comments - can relate to groups, posts, photos
+	Comment ID
+	Timestamp
+	Group ID - REFERENCE Group - Group ID
+	User ID - REFERENCE Users - UserID
